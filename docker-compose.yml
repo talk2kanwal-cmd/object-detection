@@ -1,0 +1,18 @@
+services:
+  api:
+    build: .
+    command: uvicorn api:app --host 0.0.0.0 --port 8000
+    ports:
+      - "8000:8000"
+    environment:
+      YOLO_MODEL: ${YOLO_MODEL:-yolov8n.pt}
+
+  streamlit:
+    build: .
+    command: streamlit run streamlit_app.py --server.address 0.0.0.0 --server.port 8501
+    depends_on:
+      - api
+    ports:
+      - "8501:8501"
+    environment:
+      DETECTION_API_URL: http://api:8000
