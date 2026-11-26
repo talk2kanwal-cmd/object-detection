@@ -2,6 +2,19 @@
 
 A demonstrable computer-vision MVP for detecting multiple objects in images and videos. It provides a FastAPI REST API, a Streamlit interface, and a Docker Compose setup. The detector uses the pretrained Ultralytics YOLOv8 nano model by default.
 
+## Tools and technologies
+
+| Tool | Purpose |
+| --- | --- |
+| Python | Application and API implementation |
+| Ultralytics YOLOv8 | Object detection model |
+| OpenCV, NumPy, Pillow | Video/image decoding and image processing |
+| FastAPI, Uvicorn, python-multipart | REST API and multipart file uploads |
+| Streamlit, pandas, PyArrow | Interactive interface and detection result tables |
+| Requests | Streamlit-to-API communication |
+| pytest | Automated tests |
+| Docker, Docker Compose | Container packaging and local multi-service deployment |
+
 ## What works in this phase
 
 - Upload an image and view detected labels, confidence scores, and bounding boxes.
