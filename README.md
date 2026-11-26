@@ -81,7 +81,17 @@ The unit tests use a stub detector model and do not download model weights.
 
 ## Cloud deployment
 
-For Streamlit Community Cloud, select Python 3.12 or 3.13 in the app's advanced settings and make sure the latest `requirements.txt` is pushed to the deployed branch. Build the Docker image and deploy it to a container platform that supports Docker Compose or separate container services. Expose port 8501 for the UI and port 8000 for the API; configure the Streamlit service's `DETECTION_API_URL` to the reachable API URL. Configure `YOLO_MODEL` and persistent model storage as appropriate for the selected platform. For a public deployment, add authentication, request-size and video-duration limits, TLS, and resource monitoring before accepting untrusted uploads.
+Streamlit Community Cloud runs the UI, not the FastAPI server. Deploy the API separately as a web service using the repository's Dockerfile and a start command such as `uvicorn api:app --host 0.0.0.0 --port $PORT`. The service must expose a public HTTPS URL and allow the Streamlit app to reach it.
+
+In the Streamlit Community Cloud app settings, select Python 3.12 or 3.13, then add this to **Secrets** (replace the URL with the deployed API's base URL):
+
+```toml
+DETECTION_API_URL = "https://your-api.example.com"
+```
+
+The app reads `DETECTION_API_URL` from the environment first, then Streamlit Secrets. It defaults to `http://localhost:8000` for local development. `localhost` is not a valid API address for a separately deployed Streamlit Cloud app. Push the latest `requirements.txt` and app changes to the deployed branch, then reboot the app.
+
+For Docker Compose, the API and UI run together; use `docker compose up --build` and open port 8501 for the UI and port 8000 for the API. Configure `YOLO_MODEL` and persistent model storage as appropriate for the selected platform. For a public deployment, add authentication, request-size and video-duration limits, TLS, and resource monitoring before accepting untrusted uploads.
 
 ## Licensing note
 

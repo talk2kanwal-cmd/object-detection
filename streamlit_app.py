@@ -4,9 +4,21 @@ from io import BytesIO
 import pandas as pd
 import requests
 import streamlit as st
+from streamlit.errors import StreamlitSecretNotFoundError
 from PIL import Image, ImageDraw
 
-API_URL = os.getenv("DETECTION_API_URL", "http://localhost:8000").rstrip("/")
+
+def get_api_url() -> str:
+    api_url = os.getenv("DETECTION_API_URL")
+    if not api_url:
+        try:
+            api_url = st.secrets.get("DETECTION_API_URL")
+        except StreamlitSecretNotFoundError:
+            api_url = None
+    return (api_url or "http://localhost:8000").rstrip("/")
+
+
+API_URL = get_api_url()
 IMAGE_EXTENSIONS = ["jpg", "jpeg", "png", "webp", "bmp"]
 VIDEO_EXTENSIONS = ["mp4", "mov", "avi", "mkv"]
 
@@ -26,6 +38,11 @@ with st.sidebar:
         st.success("Detection API is connected.")
     except requests.RequestException as error:
         st.error(f"Detection API is unavailable: {error}")
+        st.caption(
+            "For Streamlit Cloud, deploy the API separately and set "
+            "DETECTION_API_URL to its public HTTPS URL in app Secrets. "
+            "localhost points to the Streamlit container."
+        )
 
 uploaded_file = st.file_uploader(
     "Choose an image or video",
